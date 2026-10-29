@@ -22,6 +22,9 @@ import okhttp3.Request
 import okhttp3.Response
 import rx.Observable
 import java.io.IOException
+import java.net.ConnectException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import kotlin.time.Duration.Companion.seconds
 
 @Source
@@ -42,6 +45,17 @@ abstract class Rncalation :
             ?.trim()
             ?.trimEnd('/')
             ?.takeIf { it.isNotEmpty() }
+
+    /**
+     * The proxy can hold a request up to its own deadline (180s by default, a manual unlock up to
+     * 60s), so it gets a longer read timeout than the site client.
+     */
+    private val proxyClient by lazy {
+        client.newBuilder()
+            .connectTimeout(10.seconds)
+            .readTimeout(PROXY_READ_TIMEOUT)
+            .build()
+    }
 
     override fun headersBuilder() = super.headersBuilder()
         .add("Referer", "$baseUrl/")
@@ -210,7 +224,25 @@ abstract class Rncalation :
         }
 
         val response = try {
-            client.newCall(GET(requestUrl, headers)).execute()
+            proxyClient.newCall(GET(requestUrl, headers)).execute()
+        } catch (e: SocketTimeoutException) {
+            throw Exception(
+                "El proxy está tardando demasiado en responder ($proxy). Desbloquear un capítulo puede " +
+                    "tardar varios minutos: espera un poco y vuelve a intentarlo.",
+                e,
+            )
+        } catch (e: ConnectException) {
+            throw Exception(
+                "El proxy no está arrancado o no se puede conectar en $proxy. " +
+                    "Arráncalo y comprueba la URL en los ajustes de la extensión (Proxy URL).",
+                e,
+            )
+        } catch (e: UnknownHostException) {
+            throw Exception(
+                "No se encuentra el proxy en $proxy (nombre de host desconocido). " +
+                    "Revisa la URL en los ajustes de la extensión (Proxy URL).",
+                e,
+            )
         } catch (e: IOException) {
             throw Exception(
                 "El proxy no responde en $proxy. Comprueba que está arrancado y que la URL es correcta " +
@@ -221,16 +253,14 @@ abstract class Rncalation :
 
         response.use {
             val body = it.body.string()
+            val error = runCatching { body.parseAs<ProxyErrorDto>(proxyJson) }.getOrNull()
 
             if (it.code == HTTP_CONFLICT) {
-                throw Exception(lockedChapterMessage(hash, proxy, body))
+                throw Exception(lockedChapterMessage(hash, proxy, error))
             }
 
             if (!it.isSuccessful) {
-                throw Exception(
-                    "El proxy ($proxy) respondió ${it.code} al pedir el capítulo $hash. " +
-                        "Revisa que el proxy esté actualizado y que el hash sea correcto.",
-                )
+                throw Exception(proxyErrorMessage(hash, proxy, it.code, error))
             }
 
             val dto = try {
@@ -245,8 +275,13 @@ abstract class Rncalation :
 
             if (dto.pages.isEmpty()) {
                 throw Exception(
-                    "El proxy ($proxy) no devolvió ninguna página para el capítulo $hash. " +
-                        "Puede que el desbloqueo haya caducado: vuelve a desbloquearlo y reinténtalo.",
+                    if (dto.unlocked) {
+                        "El proxy ($proxy) dice que el capítulo $hash está desbloqueado pero no devolvió " +
+                            "ninguna página. Vuelve a intentarlo; si sigue igual, revisa el proxy."
+                    } else {
+                        "El proxy ($proxy) no devolvió ninguna página para el capítulo $hash y lo da por " +
+                            "bloqueado. Desbloquéalo con la herramienta del proxy y vuelve a intentarlo."
+                    },
                 )
             }
 
@@ -265,31 +300,6 @@ abstract class Rncalation :
         }
 
         return hash
-    }
-
-    private fun lockedChapterMessage(
-        hash: String,
-        proxy: String? = null,
-        errorBody: String? = null,
-    ): String {
-        val error = errorBody?.let { body ->
-            runCatching { body.parseAs<ProxyErrorDto>(proxyJson) }.getOrNull()?.error
-        }
-
-        return buildString {
-            append("Capítulo bloqueado. La web no muestra las páginas hasta que lo desbloqueas una vez.\n\n")
-            append("Desbloquéalo con desbloquear.bat (o ejecutando node tools/unlock.mjs --hash $hash) ")
-            append("y vuelve a intentarlo.")
-
-            error?.message?.takeIf { it.isNotBlank() }?.let { append("\n\nDetalle: $it") }
-            error?.next?.command?.takeIf { it.isNotBlank() }?.let { append("\n\nComando: $it") }
-            error?.next?.url?.takeIf { it.isNotBlank() }?.let { append("\n\nEnlace de desbloqueo: $it") }
-
-            if (error == null && proxy == null) {
-                append("\n\nSi el capítulo ya está desbloqueado, configura el proxy en los ajustes de la extensión ")
-                append("(Proxy URL): los capítulos nuevos solo se pueden leer a través de él.")
-            }
-        }
     }
 
     override fun setupPreferenceScreen(screen: PreferenceScreen) {
@@ -315,7 +325,11 @@ abstract class Rncalation :
 
     companion object {
         private const val PROXY_URL_PREF = "proxy_url"
+
         private const val HTTP_CONFLICT = 409
+
+        // The proxy holds a request up to its own 180s deadline (a manual unlock gets 60s).
+        private val PROXY_READ_TIMEOUT = 200.seconds
 
         private val proxyJson = Json { ignoreUnknownKeys = true }
     }
