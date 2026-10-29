@@ -1,9 +1,46 @@
 package eu.kanade.tachiyomi.extension.es.nartag
 
 import keiyoushi.utils.tryParse
+import kotlinx.serialization.Serializable
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+
+/**
+ * Response of `GET {proxy}/chapter/{hash}` when the chapter is available.
+ */
+@Serializable
+data class ProxyChapterDto(
+    val hash: String? = null,
+    val unlocked: Boolean = false,
+    val source: String? = null,
+    val cached: Boolean = false,
+    val comicSlug: String? = null,
+    val pages: List<String> = emptyList(),
+)
+
+/**
+ * Response of `GET {proxy}/chapter/{hash}` when the chapter is locked (HTTP 409).
+ */
+@Serializable
+data class ProxyErrorDto(
+    val error: ProxyErrorBodyDto? = null,
+    val retryable: Boolean = false,
+)
+
+@Serializable
+data class ProxyErrorBodyDto(
+    val code: String? = null,
+    val message: String? = null,
+    val next: ProxyNextDto? = null,
+)
+
+@Serializable
+data class ProxyNextDto(
+    val command: String? = null,
+    val importCommand: String? = null,
+    val url: String? = null,
+)
 
 private val dateFormat = SimpleDateFormat("MMM d, yyyy", Locale.US)
 
