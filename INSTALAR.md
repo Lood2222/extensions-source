@@ -2,8 +2,9 @@
 
 Esta es la extensión **Rncalation** (la de Keiyoushi) **parcheada**: además de lo de siempre,
 sabe leer los capítulos a través del **proxy de desbloqueo**
-([`Lood2222/rncalation-proxy`](https://github.com/Lood2222/rncalation-proxy)). Sin el proxy
-funciona igual que la oficial, pero los capítulos bloqueados no se pueden abrir.
+([`Lood2222/rncalation-proxy`](https://github.com/Lood2222/rncalation-proxy), repositorio
+**privado**). Sin el proxy funciona igual que la oficial, pero los capítulos bloqueados no se
+pueden abrir.
 
 Datos técnicos, por si hacen falta:
 
@@ -83,11 +84,35 @@ Así la app te avisa de actualizaciones y no tienes que buscar el APK.
 La extensión no necesita el proxy para navegar, buscar ni leer los capítulos normales. Lo
 necesita para los **últimos capítulos**, que la web esconde detrás de un anuncio.
 
-1. Descarga el proxy: <https://github.com/Lood2222/rncalation-proxy> (rama
-   `rncalation-proxy`). Arranca **`iniciar.bat`** con doble clic (Windows) o `./iniciar.sh`
-   (Linux/macOS). Levanta el proxy y su FlareSolverr; el proxy escucha en el puerto **9193**.
-   Comprueba que responde abriendo <http://localhost:9193/health> en el navegador de ese
-   ordenador.
+1. **Descarga el proxy.** Ojo: el repositorio del proxy es **privado**, así que un `git clone`
+   normal falla (pide usuario y contraseña) y un enlace "en crudo" sin sesión da 404. Se hace
+   desde la web, con tu sesión de GitHub abierta:
+
+   1. Abre <https://github.com/Lood2222/rncalation-proxy> **con tu sesión de GitHub iniciada**.
+      Si no has iniciado sesión verás un 404: es normal, el repo es privado.
+   2. Pulsa el botón verde **`Code` → `Download ZIP`**.
+   3. Descomprime el ZIP en una carpeta, por ejemplo `C:\rncalation-proxy`.
+   4. Doble clic en **`iniciar.bat`** (Windows) o `./iniciar.sh` (Linux/macOS). Levanta el proxy y
+      su FlareSolverr; escucha en el puerto **9193**.
+   5. Comprueba que responde abriendo <http://localhost:9193/health> en el navegador de ese
+      ordenador.
+
+   > ⚠️ **La rama por defecto del repo es `master`, y ahí NO está el proxy** (solo un README).
+   > El código vive en la rama **`rncalation-proxy`**, así que el ZIP del botón `Code` tal cual
+   > **no sirve**. Usa este enlace, que descarga el ZIP de la rama correcta:
+   >
+   > <https://github.com/Lood2222/rncalation-proxy/archive/refs/heads/rncalation-proxy.zip>
+   >
+   > (Dentro del ZIP la carpeta se llama `rncalation-proxy-rncalation-proxy`; ábrela y ahí están
+   > `iniciar.bat`, `desbloquear.bat` y `parar.bat`.)
+   >
+   > Si algún día lo quieres tener en otro sitio o con `git`, necesitarás un **token de GitHub**
+   > (`gh auth login`, o un PAT con permiso de lectura del repo), porque el repositorio es
+   > privado.
+   >
+   > Dentro del ZIP hay un **`LEEME.md`** escrito para alguien que no sabe nada de informática:
+   > instalación de Docker y Node, los 5 pasos y una tabla de problemas. Es la guía del proxy;
+   > este documento solo cuenta lo de la extensión.
 2. En Mihon: **Explorar → Extensiones → Rncalation → ⚙ (Ajustes de la extensión)**. También se
    llega desde **Explorar → Fuentes → Rncalation → Ajustes**.
 3. Rellena **Proxy URL** con la dirección del proxy **sin barra final**:
@@ -124,7 +149,7 @@ Eso **no es un fallo de la extensión**: la web exige que una **persona** pase u
 captcha (Cloudflare Turnstile) una vez por capítulo. El proxy no puede hacerlo solo. Qué hacer:
 
 1. En el PC donde está el proxy, doble clic en **`desbloquear.bat`** (Windows) o `./desbloquear.sh`
-   (Linux/macOS), del repo <https://github.com/Lood2222/rncalation-proxy>. Te pide el **número de
+   (Linux/macOS), en la carpeta que descargaste en el paso 1. Te pide el **número de
    capítulo** (y el cómic si no es el de por defecto) y hace todo lo demás:
    - Abre un Chromium de verdad en el capítulo.
    - Tú pulsas el botón de desbloquear, pasas el anuncio y resuelves el captcha.
