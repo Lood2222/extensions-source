@@ -1,0 +1,33 @@
+{
+  "name": "Rncalation Proxy",
+  "badgeLabel": "RNC",
+  "signingKey": "0730e8cea409671f12555bffd692aba3533f2731f73d6dbfc2861d8ff730b99f",
+  "contact": {
+    "website": "https://github.com/Lood2222/extensions-source",
+    "discord": null
+  },
+  "extensionList": {
+    "extensions": [
+      {
+        "name": "Rncalation",
+        "packageName": "eu.kanade.tachiyomi.extension.es.nartag",
+        "resources": {
+          "apkUrl": "https://github.com/Lood2222/extensions-source/releases/download/rncalation-proxy-v1/rncalation-proxy-v1.4.65.apk",
+          "iconUrl": "https://raw.githubusercontent.com/Lood2222/extensions-source/feat/T3/src/es/nartag/res/mipmap-xhdpi/ic_launcher.png"
+        },
+        "extensionLib": "1.4",
+        "versionCode": 65,
+        "versionName": "1.4.65",
+        "contentWarning": "MIXED",
+        "sources": [
+          {
+            "id": 2973017642163731007,
+            "name": "Rncalation",
+            "language": "es",
+            "homeUrl": "https://rncalation.online"
+          }
+        ]
+      }
+    ]
+  }
+}

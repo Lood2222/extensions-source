@@ -1,0 +1,9 @@
+{
+  "index_v2": "https://raw.githubusercontent.com/Lood2222/extensions-source/feat/T3/index.json",
+  "meta": {
+    "name": "Rncalation Proxy",
+    "shortName": "RNC",
+    "website": "https://github.com/Lood2222/extensions-source",
+    "signingKeyFingerprint": "0730e8cea409671f12555bffd692aba3533f2731f73d6dbfc2861d8ff730b99f"
+  }
+}
