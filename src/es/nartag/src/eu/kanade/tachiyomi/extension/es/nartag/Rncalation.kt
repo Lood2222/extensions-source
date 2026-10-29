@@ -1,6 +1,10 @@
 package eu.kanade.tachiyomi.extension.es.nartag
 
+import android.content.SharedPreferences
+import androidx.preference.EditTextPreference
+import androidx.preference.PreferenceScreen
 import eu.kanade.tachiyomi.network.GET
+import eu.kanade.tachiyomi.source.ConfigurableSource
 import eu.kanade.tachiyomi.source.model.FilterList
 import eu.kanade.tachiyomi.source.model.MangasPage
 import eu.kanade.tachiyomi.source.model.Page
@@ -10,20 +14,34 @@ import eu.kanade.tachiyomi.source.online.HttpSource
 import eu.kanade.tachiyomi.util.asJsoup
 import keiyoushi.annotation.Source
 import keiyoushi.network.rateLimit
+import keiyoushi.utils.getPreferences
+import keiyoushi.utils.parseAs
+import kotlinx.serialization.json.Json
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.Request
 import okhttp3.Response
 import rx.Observable
+import java.io.IOException
 import kotlin.time.Duration.Companion.seconds
 
 @Source
-abstract class Rncalation : HttpSource() {
+abstract class Rncalation :
+    HttpSource(),
+    ConfigurableSource {
 
     override val supportsLatest = true
 
     override val client = network.client.newBuilder()
         .rateLimit(2, 1.seconds)
         .build()
+
+    private val preferences: SharedPreferences = getPreferences()
+
+    private val proxyUrl: String?
+        get() = preferences.getString(PROXY_URL_PREF, null)
+            ?.trim()
+            ?.trimEnd('/')
+            ?.takeIf { it.isNotEmpty() }
 
     override fun headersBuilder() = super.headersBuilder()
         .add("Referer", "$baseUrl/")
@@ -149,12 +167,141 @@ abstract class Rncalation : HttpSource() {
         }
     }
 
+    override fun fetchPageList(chapter: SChapter): Observable<List<Page>> = Observable.fromCallable {
+        val proxy = proxyUrl
+        if (proxy != null) {
+            proxyPageList(proxy, chapter)
+        } else {
+            client.newCall(pageListRequest(chapter)).execute().use { pageListParse(it) }
+        }
+    }
+
     override fun pageListParse(response: Response): List<Page> {
+        val hash = hashFromUrl(response.request.url.toString())
         val document = response.asJsoup()
-        return document.select("img.page-img, .page-wrap img").mapIndexed { index, element ->
+
+        if (document.selectFirst("[data-cuty-modal]") != null) {
+            throw Exception(lockedChapterMessage(hash))
+        }
+
+        val pages = document.select("img.page-img, .page-wrap img").mapIndexed { index, element ->
             val imageUrl = element.attr("abs:data-src").ifEmpty { element.attr("abs:src") }
             Page(index, imageUrl = imageUrl)
+        }.filter { !it.imageUrl.isNullOrEmpty() }
+
+        if (pages.isEmpty()) {
+            throw Exception(lockedChapterMessage(hash))
         }
+
+        return pages
+    }
+
+    private fun proxyPageList(proxy: String, chapter: SChapter): List<Page> {
+        val hash = hashFromUrl(chapter.url)
+
+        val requestUrl = try {
+            "$proxy/chapter/$hash".toHttpUrl()
+        } catch (e: IllegalArgumentException) {
+            throw Exception(
+                "La URL del proxy no es válida: $proxy. Escríbela completa, empezando por http:// o https:// " +
+                    "(Ajustes de la extensión → Proxy URL).",
+                e,
+            )
+        }
+
+        val response = try {
+            client.newCall(GET(requestUrl, headers)).execute()
+        } catch (e: IOException) {
+            throw Exception(
+                "El proxy no responde en $proxy. Comprueba que está arrancado y que la URL es correcta " +
+                    "(Ajustes de la extensión → Proxy URL). Detalle: ${e.message}",
+                e,
+            )
+        }
+
+        response.use {
+            val body = it.body.string()
+
+            if (it.code == HTTP_CONFLICT) {
+                throw Exception(lockedChapterMessage(hash, proxy, body))
+            }
+
+            if (!it.isSuccessful) {
+                throw Exception(
+                    "El proxy ($proxy) respondió ${it.code} al pedir el capítulo $hash. " +
+                        "Revisa que el proxy esté actualizado y que el hash sea correcto.",
+                )
+            }
+
+            val dto = try {
+                body.parseAs<ProxyChapterDto>(proxyJson)
+            } catch (e: Exception) {
+                throw Exception(
+                    "El proxy ($proxy) devolvió una respuesta que no se pudo leer para el capítulo $hash. " +
+                        "¿Es la URL de un proxy compatible?",
+                    e,
+                )
+            }
+
+            if (dto.pages.isEmpty()) {
+                throw Exception(
+                    "El proxy ($proxy) no devolvió ninguna página para el capítulo $hash. " +
+                        "Puede que el desbloqueo haya caducado: vuelve a desbloquearlo y reinténtalo.",
+                )
+            }
+
+            return dto.pages.mapIndexed { index, imageUrl -> Page(index, imageUrl = imageUrl) }
+        }
+    }
+
+    private fun hashFromUrl(url: String): String {
+        val hash = url.substringBefore('?')
+            .substringBefore('#')
+            .trimEnd('/')
+            .substringAfterLast('/')
+
+        if (hash.isBlank()) {
+            throw Exception("No se pudo obtener el hash del capítulo a partir de la URL: $url")
+        }
+
+        return hash
+    }
+
+    private fun lockedChapterMessage(
+        hash: String,
+        proxy: String? = null,
+        errorBody: String? = null,
+    ): String {
+        val error = errorBody?.let { body ->
+            runCatching { body.parseAs<ProxyErrorDto>(proxyJson) }.getOrNull()?.error
+        }
+
+        return buildString {
+            append("Capítulo bloqueado. La web no muestra las páginas hasta que lo desbloqueas una vez.\n\n")
+            append("Desbloquéalo con desbloquear.bat (o ejecutando node tools/unlock.mjs --hash $hash) ")
+            append("y vuelve a intentarlo.")
+
+            error?.message?.takeIf { it.isNotBlank() }?.let { append("\n\nDetalle: $it") }
+            error?.next?.command?.takeIf { it.isNotBlank() }?.let { append("\n\nComando: $it") }
+            error?.next?.url?.takeIf { it.isNotBlank() }?.let { append("\n\nEnlace de desbloqueo: $it") }
+
+            if (error == null && proxy == null) {
+                append("\n\nSi el capítulo ya está desbloqueado, configura el proxy en los ajustes de la extensión ")
+                append("(Proxy URL): los capítulos nuevos solo se pueden leer a través de él.")
+            }
+        }
+    }
+
+    override fun setupPreferenceScreen(screen: PreferenceScreen) {
+        EditTextPreference(screen.context).apply {
+            key = PROXY_URL_PREF
+            title = "Proxy URL"
+            summary = "URL del proxy de desbloqueo (ej. http://192.168.1.50:8787). " +
+                "Vacío = desactivado: los capítulos bloqueados no se podrán leer."
+            setDefaultValue("")
+            dialogTitle = "Proxy URL"
+            dialogMessage = "Escribe la URL del proxy sin la barra final."
+        }.also { screen.addPreference(it) }
     }
 
     override fun imageUrlParse(response: Response): String = throw UnsupportedOperationException()
@@ -165,4 +312,11 @@ abstract class Rncalation : HttpSource() {
         StatusFilter(),
         GenreFilter(genresList),
     )
+
+    companion object {
+        private const val PROXY_URL_PREF = "proxy_url"
+        private const val HTTP_CONFLICT = 409
+
+        private val proxyJson = Json { ignoreUnknownKeys = true }
+    }
 }
