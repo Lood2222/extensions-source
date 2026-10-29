@@ -21,10 +21,14 @@ data class ProxyChapterDto(
 
 /**
  * Response of `GET {proxy}/chapter/{hash}` when the chapter is locked (HTTP 409).
+ *
+ * The proxy puts `next` (and `details`/`retryable`) **at the top level**, next to `error`; the
+ * nested `error.next` is only kept as a fallback for older shapes.
  */
 @Serializable
 data class ProxyErrorDto(
     val error: ProxyErrorBodyDto? = null,
+    val next: ProxyNextDto? = null,
     val retryable: Boolean = false,
 )
 
@@ -33,13 +37,20 @@ data class ProxyErrorBodyDto(
     val code: String? = null,
     val message: String? = null,
     val next: ProxyNextDto? = null,
+    val retryable: Boolean? = null,
 )
 
 @Serializable
 data class ProxyNextDto(
+    val type: String? = null,
+    val hash: String? = null,
     val command: String? = null,
+    val importEndpoint: String? = null,
     val importCommand: String? = null,
+    val reason: String? = null,
     val url: String? = null,
+    val guide: String? = null,
+    val retryable: Boolean? = null,
 )
 
 private val dateFormat = SimpleDateFormat("MMM d, yyyy", Locale.US)
