@@ -97,15 +97,16 @@ necesita para los **últimos capítulos**, que la web esconde detrás de un anun
    5. Comprueba que responde abriendo <http://localhost:9193/health> en el navegador de ese
       ordenador.
 
-   > ⚠️ **La rama por defecto del repo es `master`, y ahí NO está el proxy** (solo un README).
-   > El código vive en la rama **`rncalation-proxy`**, así que el ZIP del botón `Code` tal cual
-   > **no sirve**. Usa este enlace, que descarga el ZIP de la rama correcta:
+   > ℹ️ La rama por defecto del repo ya es **`rncalation-proxy`**, que es donde está el proxy:
+   > el botón **`Code` → `Download ZIP`** descarga lo correcto y **no hay que cambiar de rama**.
+   > Si prefieres un enlace directo (o quieres asegurarte), este ZIP es exactamente el mismo:
    >
    > <https://github.com/Lood2222/rncalation-proxy/archive/refs/heads/rncalation-proxy.zip>
    >
    > (Dentro del ZIP la carpeta se llama `rncalation-proxy-rncalation-proxy`; ábrela y ahí están
    > `iniciar.bat`, `desbloquear.bat` y `parar.bat`.)
    >
+   > El repositorio es **privado**: si abres el enlace sin sesión de GitHub verás un 404.
    > Si algún día lo quieres tener en otro sitio o con `git`, necesitarás un **token de GitHub**
    > (`gh auth login`, o un PAT con permiso de lectura del repo), porque el repositorio es
    > privado.
