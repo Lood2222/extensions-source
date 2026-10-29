@@ -12,12 +12,12 @@
         "name": "Rncalation",
         "packageName": "eu.kanade.tachiyomi.extension.es.nartag",
         "resources": {
-          "apkUrl": "https://github.com/Lood2222/extensions-source/releases/download/rncalation-proxy-v1/rncalation-proxy-v1.4.65.apk",
-          "iconUrl": "https://raw.githubusercontent.com/Lood2222/extensions-source/feat/T3/src/es/nartag/res/mipmap-xhdpi/ic_launcher.png"
+          "apkUrl": "https://github.com/Lood2222/extensions-source/releases/download/rncalation-proxy-v2/rncalation-proxy-v1.4.66.apk",
+          "iconUrl": "https://raw.githubusercontent.com/Lood2222/extensions-source/rncalation-proxy/src/es/nartag/res/mipmap-xhdpi/ic_launcher.png"
         },
         "extensionLib": "1.4",
-        "versionCode": 65,
-        "versionName": "1.4.65",
+        "versionCode": 66,
+        "versionName": "1.4.66",
         "contentWarning": "CONTENT_WARNING_MIXED",
         "sources": [
           {

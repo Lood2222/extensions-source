@@ -1,7 +1,8 @@
 # Rncalation con proxy — cómo instalarlo y usarlo
 
 Esta es la extensión **Rncalation** (la de Keiyoushi) **parcheada**: además de lo de siempre,
-sabe leer los capítulos a través del **proxy de desbloqueo** (`rncalation-proxy`). Sin el proxy
+sabe leer los capítulos a través del **proxy de desbloqueo**
+([`Lood2222/rncalation-proxy`](https://github.com/Lood2222/rncalation-proxy)). Sin el proxy
 funciona igual que la oficial, pero los capítulos bloqueados no se pueden abrir.
 
 Datos técnicos, por si hacen falta:
@@ -10,15 +11,20 @@ Datos técnicos, por si hacen falta:
 |---|---|
 | Nombre en la app | `Rncalation` |
 | `applicationId` | `eu.kanade.tachiyomi.extension.es.nartag` (**el mismo que la oficial**) |
-| Versión | `versionCode` 65 · `versionName` 1.4.65 |
+| Versión | `versionCode` 66 · `versionName` 1.4.66 |
 | Firma | propia (`CN=Rncalation Proxy Build`), **no** la de Keiyoushi |
-| APK | [`rncalation-proxy-v1.4.65.apk`](https://github.com/Lood2222/extensions-source/releases/download/rncalation-proxy-v1/rncalation-proxy-v1.4.65.apk) |
-| Repo de extensiones | `https://raw.githubusercontent.com/Lood2222/extensions-source/feat/T3/index.min.json` |
+| APK | [`rncalation-proxy-v1.4.66.apk`](https://github.com/Lood2222/extensions-source/releases/download/rncalation-proxy-v2/rncalation-proxy-v1.4.66.apk) |
+| Release | <https://github.com/Lood2222/extensions-source/releases/tag/rncalation-proxy-v2> |
+| Repo de extensiones | `https://raw.githubusercontent.com/Lood2222/extensions-source/rncalation-proxy/index.min.json` |
 
 > ⚠️ **Lo más importante de todo:** como se llama igual que la extensión oficial pero está
 > firmada con otra clave, **Android no deja actualizar una encima de la otra**. Antes de instalar
 > esta, **desinstala la extensión "Rncalation" oficial** (Ajustes → Extensiones → Rncalation →
 > Desinstalar). Si no, verás un error tipo *"Aplicación no instalada"* o *"App not installed"*.
+>
+> La única excepción: si ya tienes instalada una versión anterior **de esta misma** extensión
+> parcheada (v1, `versionCode` 65), la v2 (`versionCode` 66) sí se instala **encima** sin
+> desinstalar nada: está firmada con la misma clave.
 
 ---
 
@@ -33,7 +39,7 @@ Así la app te avisa de actualizaciones y no tienes que buscar el APK.
 3. Pulsa **+ / Añadir** y pega exactamente esta URL:
 
    ```
-   https://raw.githubusercontent.com/Lood2222/extensions-source/feat/T3/index.min.json
+   https://raw.githubusercontent.com/Lood2222/extensions-source/rncalation-proxy/index.min.json
    ```
 
 4. Acepta. Vuelve a **Explorar → Extensiones**, baja a la pestaña **ES (español)** y busca
@@ -46,7 +52,7 @@ Así la app te avisa de actualizaciones y no tienes que buscar el APK.
 2. En *Repositorios de extensiones* pulsa **Añadir** y pega la misma URL:
 
    ```
-   https://raw.githubusercontent.com/Lood2222/extensions-source/feat/T3/index.min.json
+   https://raw.githubusercontent.com/Lood2222/extensions-source/rncalation-proxy/index.min.json
    ```
 
 3. Pulsa el botón de **buscar extensiones nuevas** y luego instala **Rncalation**.
@@ -58,11 +64,11 @@ Así la app te avisa de actualizaciones y no tienes que buscar el APK.
 
 ## Opción B: instalar el APK a mano
 
-1. **Desinstala antes la extensión oficial** "Rncalation" (misma clave distinta = no se puede
+1. **Desinstala antes la extensión oficial** "Rncalation" (misma app, distinta firma = no se puede
    actualizar encima). Esto borra el ajuste del proxy, tendrás que volver a ponerlo (paso 4).
 2. En el móvil, abre este enlace y descarga el APK:
 
-   https://github.com/Lood2222/extensions-source/releases/download/rncalation-proxy-v1/rncalation-proxy-v1.4.65.apk
+   https://github.com/Lood2222/extensions-source/releases/download/rncalation-proxy-v2/rncalation-proxy-v1.4.66.apk
 
 3. Al abrirlo, Android dirá que **no se pueden instalar apps de origen desconocido**. Pulsa
    **Ajustes** en ese aviso y activa el permiso para el navegador (o para el gestor de archivos)
@@ -77,18 +83,19 @@ Así la app te avisa de actualizaciones y no tienes que buscar el APK.
 La extensión no necesita el proxy para navegar, buscar ni leer los capítulos normales. Lo
 necesita para los **últimos capítulos**, que la web esconde detrás de un anuncio.
 
-1. Arranca el proxy en el ordenador donde lo tengas: doble clic en **`iniciar.bat`** (Windows) o
-   `./iniciar.sh` (Linux/macOS). Escucha en el puerto **9193**. Comprueba que responde abriendo
-   <http://localhost:9193/health> en el navegador de ese ordenador.
+1. Descarga el proxy: <https://github.com/Lood2222/rncalation-proxy> (rama
+   `rncalation-proxy`). Arranca **`iniciar.bat`** con doble clic (Windows) o `./iniciar.sh`
+   (Linux/macOS). Levanta el proxy y su FlareSolverr; el proxy escucha en el puerto **9193**.
+   Comprueba que responde abriendo <http://localhost:9193/health> en el navegador de ese
+   ordenador.
 2. En Mihon: **Explorar → Extensiones → Rncalation → ⚙ (Ajustes de la extensión)**. También se
    llega desde **Explorar → Fuentes → Rncalation → Ajustes**.
 3. Rellena **Proxy URL** con la dirección del proxy **sin barra final**:
 
    | Dónde corre el proxy | Qué poner |
    |---|---|
-   | En el mismo móvil que Mihon | `http://127.0.0.1:9193` |
+   | En el **mismo** móvil/PC que Mihon | `http://localhost:9193` |
    | En tu PC, y el móvil está en la misma wifi | `http://IP-DEL-PC:9193` |
-   | En un servidor de casa (siempre encendido) | `http://IP-DEL-SERVIDOR:9193` |
 
    Para saber la IP del PC: en Windows, abre *CMD* y escribe `ipconfig`; la línea **Dirección
    IPv4** (algo como `192.168.1.50`) es la que va en la URL. **Ojo:** el móvil y el PC tienen que
@@ -103,19 +110,35 @@ necesita para los **últimos capítulos**, que la web esconde detrás de un anun
 
 Al abrir un capítulo bloqueado verás un mensaje en español, del estilo:
 
-> **Capítulo bloqueado. La web no muestra las páginas hasta que lo desbloqueas una vez.**
-> Desbloquéalo con desbloquear.bat (o ejecutando `node tools/unlock.mjs --hash …`) y vuelve a
-> intentarlo.
-> Detalle: `LOCKED_MANUAL` … Enlace de desbloqueo: `https://…`
+> **Capítulo bloqueado: la web no muestra las páginas hasta que lo desbloqueas una vez.**
+>
+> 1. En el ordenador, ejecuta el comando del proxy:
+>    `node tools/unlock.mjs --slug el-tutorial-es-demasiado-dificil --num 287 --out session.json`
+>
+> 2. Abre este enlace en el navegador y resuelve el captcha:
+>    `https://cuty.io/…`
+>
+> Cuando termine, vuelve a intentarlo.
 
 Eso **no es un fallo de la extensión**: la web exige que una **persona** pase un anuncio y un
 captcha (Cloudflare Turnstile) una vez por capítulo. El proxy no puede hacerlo solo. Qué hacer:
 
-1. En el PC donde está el proxy, doble clic en **`desbloquear.bat`** (o `./desbloquear.sh`).
-   Se abre un Chromium de verdad, te pide el número de capítulo, pulsas el botón de desbloquear
-   de la web, pasas el anuncio y resuelves el captcha. Tarda 1–3 minutos.
-2. El script guarda la sesión y la importa en el proxy automáticamente.
-3. Vuelve a Mihon y **reabre el capítulo**. Ya se lee (y queda en caché: los siguientes intentos
+1. En el PC donde está el proxy, doble clic en **`desbloquear.bat`** (Windows) o `./desbloquear.sh`
+   (Linux/macOS), del repo <https://github.com/Lood2222/rncalation-proxy>. Te pide el **número de
+   capítulo** (y el cómic si no es el de por defecto) y hace todo lo demás:
+   - Abre un Chromium de verdad en el capítulo.
+   - Tú pulsas el botón de desbloquear, pasas el anuncio y resuelves el captcha.
+   - Exporta la sesión y **la importa en el proxy** automáticamente.
+
+   Equivalente a mano, si prefieres la terminal (ya **no hace falta hash**, el proxy lo resuelve
+   por cómic y número de capítulo):
+
+   ```bash
+   node tools/unlock.mjs --slug el-tutorial-es-demasiado-dificil --num 287 --out session.json
+   ```
+
+   Tarda 1–3 minutos.
+2. Vuelve a Mihon y **reabre el capítulo**. Ya se lee (y queda en caché: los siguientes intentos
    van directos).
 
 Otros mensajes que puedes ver y qué significan:
@@ -124,7 +147,8 @@ Otros mensajes que puedes ver y qué significan:
 |---|---|
 | *El proxy no responde en …* | El proxy está apagado o la IP/puerto están mal. Arranca `iniciar.bat` y revisa la URL. |
 | *La URL del proxy no es válida…* | Falta `http://` delante. |
-| *El proxy (…) respondió 409…* | Capítulo bloqueado: hay que desbloquearlo (arriba). |
+| *El proxy (…) respondió 409…* | Capítulo bloqueado: hay que desbloquearlo (arriba). El propio mensaje trae el comando y el enlace. |
+| *Es un fallo temporal del proxy…* | El proxy estaba ocupado o la web tardó demasiado: reinténtalo en un par de minutos. |
 | *El proxy (…) no devolvió ninguna página…* | El desbloqueo caducó: vuelve a pasar `desbloquear.bat`. |
 
 ---
