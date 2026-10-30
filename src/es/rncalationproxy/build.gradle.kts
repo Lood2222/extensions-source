@@ -5,8 +5,8 @@ plugins {
 }
 
 keiyoushi {
-    name = "Rncalation"
-    versionCode = 66
+    name = "Rncalation Proxy"
+    versionCode = 67
     contentWarning = ContentWarning.MIXED
     libVersion = "1.4"
 

@@ -1,4 +1,4 @@
-package eu.kanade.tachiyomi.extension.es.nartag
+package eu.kanade.tachiyomi.extension.es.rncalationproxy
 
 import keiyoushi.utils.tryParse
 import kotlinx.serialization.Serializable

@@ -1,4 +1,4 @@
-package eu.kanade.tachiyomi.extension.es.nartag
+package eu.kanade.tachiyomi.extension.es.rncalationproxy
 
 private const val HTTP_NOT_FOUND = 404
 

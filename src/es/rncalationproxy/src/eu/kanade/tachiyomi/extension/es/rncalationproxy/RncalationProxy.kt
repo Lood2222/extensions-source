@@ -1,4 +1,4 @@
-package eu.kanade.tachiyomi.extension.es.nartag
+package eu.kanade.tachiyomi.extension.es.rncalationproxy
 
 import android.content.SharedPreferences
 import androidx.preference.EditTextPreference
@@ -28,7 +28,7 @@ import java.net.UnknownHostException
 import kotlin.time.Duration.Companion.seconds
 
 @Source
-abstract class Rncalation :
+abstract class RncalationProxy :
     HttpSource(),
     ConfigurableSource {
 
