@@ -9,20 +9,20 @@
   "extensionList": {
     "extensions": [
       {
-        "name": "Rncalation",
-        "packageName": "eu.kanade.tachiyomi.extension.es.nartag",
+        "name": "Rncalation Proxy",
+        "packageName": "eu.kanade.tachiyomi.extension.es.rncalationproxy",
         "resources": {
-          "apkUrl": "https://github.com/Lood2222/extensions-source/releases/download/rncalation-proxy-v2/rncalation-proxy-v1.4.66.apk",
-          "iconUrl": "https://raw.githubusercontent.com/Lood2222/extensions-source/rncalation-proxy/src/es/nartag/res/mipmap-xhdpi/ic_launcher.png"
+          "apkUrl": "https://github.com/Lood2222/extensions-source/releases/download/rncalation-proxy-v3/rncalation-proxy-v1.4.67.apk",
+          "iconUrl": "https://raw.githubusercontent.com/Lood2222/extensions-source/rncalation-proxy/src/es/rncalationproxy/res/mipmap-xhdpi/ic_launcher.png"
         },
         "extensionLib": "1.4",
-        "versionCode": 66,
-        "versionName": "1.4.66",
+        "versionCode": 67,
+        "versionName": "1.4.67",
         "contentWarning": "CONTENT_WARNING_MIXED",
         "sources": [
           {
-            "id": 2973017642163731007,
-            "name": "Rncalation",
+            "id": 8040813357578448266,
+            "name": "Rncalation Proxy",
             "language": "es",
             "homeUrl": "https://rncalation.online"
           }

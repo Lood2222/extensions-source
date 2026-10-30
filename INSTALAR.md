@@ -14,20 +14,31 @@ Datos técnicos, por si hacen falta:
 | `applicationId` | `eu.kanade.tachiyomi.extension.es.rncalationproxy` (**propio, distinto del de la oficial**) |
 | Versión | `versionCode` 67 · `versionName` 1.4.67 |
 | Firma | propia (`CN=Rncalation Proxy Build`), **no** la de Keiyoushi |
-| APK | [`rncalation-proxy-v1.4.66.apk`](https://github.com/Lood2222/extensions-source/releases/download/rncalation-proxy-v2/rncalation-proxy-v1.4.66.apk) |
-| Release | <https://github.com/Lood2222/extensions-source/releases/tag/rncalation-proxy-v2> |
+| APK | [`rncalation-proxy-v1.4.67.apk`](https://github.com/Lood2222/extensions-source/releases/download/rncalation-proxy-v3/rncalation-proxy-v1.4.67.apk) |
+| Release | <https://github.com/Lood2222/extensions-source/releases/tag/rncalation-proxy-v3> |
 | Repo de extensiones | `https://raw.githubusercontent.com/Lood2222/extensions-source/rncalation-proxy/index.min.json` |
 
 > ✅ **Lo más importante de todo:** esta extensión tiene **paquete propio**
 > (`…es.rncalationproxy`) y **nombre propio** en la app (**Rncalation Proxy**), así que
-> **convive con la oficial** (Rncalation de Keiyoushi): puedes tener las dos instaladas a la vez,
-> cada una con sus fuentes y sus ajustes. No hace falta desinstalar nada.
+> **ya no hay que desinstalar la oficial**: son dos aplicaciones distintas y **conviven**.
+> Puedes tener las dos instaladas a la vez, cada una con sus fuentes y sus ajustes.
 >
-> Ojo con una cosa: al ser paquetes distintos, **son dos aplicaciones separadas**. Si venías de
-> la versión anterior de este parche (la que compartía paquete con la oficial), esa sí hay que
-> desinstalarla: `versionCode` 67 tiene otro `applicationId` y Android la trata como otra app.
-> Tu biblioteca vive en Mihon, no en la extensión, pero las entradas que apuntaban a la fuente
-> antigua hay que volver a enlazarlas desde la fuente **Rncalation Proxy**.
+> En *Explorar → Extensiones* (pestaña **ES**) verás **las dos**:
+>
+> | En la app | Qué es | Para qué la usarás |
+> |---|---|---|
+> | **Rncalation** | la oficial de Keiyoushi | lo de siempre |
+> | **Rncalation Proxy** | esta (etiqueta `RNC`) | los **capítulos bloqueados**, con el proxy configurado |
+>
+> Usa la nuestra (**Rncalation Proxy**) para los capítulos bloqueados; la oficial sigue
+> funcionando igual que siempre.
+>
+> ⚠️ **Ojo con una cosa:** si tenías instalada la **versión anterior de nuestro APK** (la que se
+> llamaba igual que la oficial, `versionCode` 65/66, paquete `…es.nartag`), **desinstálala una
+> vez**. Al cambiar el paquete, Android la ve como otra app: si no la quitas te quedarían **tres**
+> extensiones de Rncalation. Tu biblioteca vive en Mihon, no en la extensión, pero las entradas
+> que apuntaban a la fuente antigua hay que volver a enlazarlas desde la fuente
+> **Rncalation Proxy**.
 
 ---
 
@@ -70,7 +81,7 @@ Así la app te avisa de actualizaciones y no tienes que buscar el APK.
 1. No hace falta desinstalar nada: el APK se instala **al lado** de la extensión oficial.
 2. En el móvil, abre este enlace y descarga el APK:
 
-   https://github.com/Lood2222/extensions-source/releases/download/rncalation-proxy-v2/rncalation-proxy-v1.4.66.apk
+   https://github.com/Lood2222/extensions-source/releases/download/rncalation-proxy-v3/rncalation-proxy-v1.4.67.apk
 
 3. Al abrirlo, Android dirá que **no se pueden instalar apps de origen desconocido**. Pulsa
    **Ajustes** en ese aviso y activa el permiso para el navegador (o para el gestor de archivos)
